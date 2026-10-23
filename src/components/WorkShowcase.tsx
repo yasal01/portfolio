@@ -26,7 +26,15 @@ function BrowserMock({
           return `${project.slug}.app`
         }
       })()
-    : `${project.slug}.app`
+    : project.githubUrl
+      ? (() => {
+          try {
+            return new URL(project.githubUrl).pathname.replace(/^\//, '')
+          } catch {
+            return `${project.slug}.app`
+          }
+        })()
+      : `${project.slug}.app`
 
   return (
     <Link to={`/work/${project.slug}`} className="alive-mock" aria-label={`${project.title} case study`}>
@@ -86,6 +94,16 @@ function ProjectBlock({
               Live site
             </a>
           ) : null}
+          {project.githubUrl ? (
+            <a
+              href={project.githubUrl}
+              className="alive-btn alive-btn--ghost"
+              target="_blank"
+              rel="noreferrer"
+            >
+              GitHub
+            </a>
+          ) : null}
         </div>
       </div>
 
@@ -99,11 +117,18 @@ function ProjectBlock({
   )
 }
 
+const tones = ['milk', 'rose', 'soft'] as const
+
+const peeksBySlug: Record<string, string[]> = {
+  'soft-glow-oil': ['/projects/soft-glow-oil/product.jpg', '/projects/soft-glow-oil/detail.jpg'],
+  noirel: ['/projects/noirel/fashion.jpg'],
+  socutesy: ['/projects/socutesy/hero.jpg'],
+  'mellow-studio': ['/projects/mellow-studio/work-sample.jpg'],
+  'hotel-website': ['/projects/hotel-website/section.jpg'],
+}
+
 export function WorkShowcase() {
   const featured = projects.filter((p) => p.featured)
-  const soft = featured.find((p) => p.slug === 'soft-glow-oil') ?? featured[0]
-  const noirel = featured.find((p) => p.slug === 'noirel') ?? featured[1]
-  const socutesy = featured.find((p) => p.slug === 'socutesy') ?? featured[2]
 
   return (
     <div className="alive" aria-label="Selected work">
@@ -142,22 +167,15 @@ export function WorkShowcase() {
         <path d="M12 2v6M12 16v6M2 12h6M16 12h6" stroke="#E6DDF9" strokeWidth="2" strokeLinecap="round" />
       </svg>
 
-      <ProjectBlock
-        project={soft}
-        tone="milk"
-        peeks={['/projects/soft-glow-oil/product.jpg', '/projects/soft-glow-oil/detail.jpg']}
-      />
-      <ProjectBlock
-        project={noirel}
-        tone="rose"
-        flip
-        peeks={['/projects/noirel/fashion.jpg']}
-      />
-      <ProjectBlock
-        project={socutesy}
-        tone="soft"
-        peeks={['/projects/socutesy/hero.jpg']}
-      />
+      {featured.map((project, index) => (
+        <ProjectBlock
+          key={project.slug}
+          project={project}
+          tone={tones[index % tones.length]}
+          flip={index % 2 === 1}
+          peeks={peeksBySlug[project.slug]}
+        />
+      ))}
     </div>
   )
 }

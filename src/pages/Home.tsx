@@ -32,8 +32,8 @@ export function Home() {
               <em className="work-section__alive">alive</em>
             </h2>
             <p className="work-section__lead">
-              Soft Glow Oil, NOIREL, and SoCutesy — websites I designed and developed, shown
-              the way they live in the browser.
+              Soft Glow Oil, NOIREL, SoCutesy, Mellow Studio, and Hotel Website — sites I
+              designed and developed, shown the way they live in the browser.
             </p>
           </Reveal>
           <WorkShowcase />
